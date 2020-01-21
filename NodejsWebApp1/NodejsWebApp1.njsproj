@@ -28,6 +28,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="greeting.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="server.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -35,6 +38,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="login.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="user.js">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>

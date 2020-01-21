@@ -14,6 +14,14 @@ http.createServer(function (req, res) {
         }
         else {
             res.write("<p>Home</p>");
+            const User = require("./user");
+            let user = new User(1, "Pasha", "Turchenkov", "test.test@test.ru", 1234);
+            res.write(user.displayInfo());
+            //const os = require("os");
+            //const greeting = require("./greeting");
+            //let username = os.userInfo().username;
+            //res.write("Дата запроса: " + greeting.date);
+            //res.write(greeting.getMessage(username));
         }
         res.end();
     }
