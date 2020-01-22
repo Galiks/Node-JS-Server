@@ -37,7 +37,10 @@
     <Content Include="app.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="static\styles\login.css">
+    <Content Include="static\css\login.css">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="static\js\createJson.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="views\index.html" />
@@ -51,10 +54,12 @@
     <Content Include="user.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="views\users.hbs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="static\" />
-    <Folder Include="static\styles\" />
+    <Folder Include="static\js\" />
+    <Folder Include="static\css\" />
     <Folder Include="views\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />

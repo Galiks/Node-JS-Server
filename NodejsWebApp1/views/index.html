@@ -4,12 +4,45 @@
 <head>
     <meta charset="utf-8" />
     <title>Main page</title>
+    <script src="js/createJson.js" type="text/javascript"></script>
 </head>
 <body>
     <div>
-        <p>It's main page</p>
-        <h1>{header}</h1>
-        <h1>{message}</h1>
+        <h1>Введите данные</h1>
+        <form name="login">
+            <label>Имя</label></br>
+            <input type="text" name="login" /></br></br>
+            <label>Пароль</label></br>
+            <input type="text" name="password" /></br></br>
+            <button type="submit" id="submit">Отправить</button>
+        </form>
+
+        <script>
+
+            document.getElementById("submit").addEventListener("click", function (e) {
+                 e.preventDefault();
+
+                let registerForm = document.forms["login"];
+                let login = registerForm.elements["login"].value;
+                let password = registerForm.elements["password"].value;
+
+                let account = JSON.stringify({ email: login, password: password });
+
+                let request = new XMLHttpRequest();
+                request.open("POST", "/user", true);
+                request.setRequestHeader("Content-Type", "application/json");
+                request.addEventListener("load", function () {
+                    let receivedUser = JSON.parse(request.response);
+                    console.log(receivedUser.email + " — " + receivedUser.password);
+                });
+                request.send(account);
+            });
+        </script>
+
+
+        <!--<p>It's main page</p>
+    <h1>{header}</h1>
+    <h1>{message}</h1>-->
     </div>
 </body>
 </html>
