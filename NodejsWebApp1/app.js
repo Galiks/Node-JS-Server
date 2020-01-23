@@ -1,3 +1,28 @@
+const sqlite = require("sqlite3").verbose();
+let database = new sqlite.Database(':memory:', (err) => {
+    if (err) {
+        return console.error(err.message);
+    }
+    console.log('Connected to the in-memory SQlite database.');
+})
+
+database.serialize(function () {
+    database.run("CREATE TABLE user (id INT PRIMARY KEY, dt TEXT)");
+
+    var stmt = database.prepare("INSERT into user values(?,?)");
+    for (var i = 0; i < 10; i++) {
+        var d = new Date();
+        var n = d.toLocaleDateString();
+        stmt.run(i, n);
+    }
+
+    stmt.finalize();
+
+    database.each("SELECT id,dt from user", function (err, row) {
+        console.log("User id: " + row.id, row.dt);
+    });
+});
+
 const port = process.env.PORT || 1337;
 
 const express = require("express");
@@ -152,6 +177,13 @@ app.put("/api/users/:id", jsonParser, function (req, res) {
 
 app.listen(port);
 
+database.close((err) => {
+    if (err) {
+        return console.error(err.message);
+    }
+    console.log('Close the database connection');
+})
+
 //const express = require("express")
 //const app = express();
 //const port = process.env.PORT || 1337;
@@ -180,9 +212,9 @@ app.listen(port);
 
 //app.use(express.static(__dirname + '/static'));
 
-app.get("/login", function (req, res) {
-    res.sendFile(__dirname + "/views/login.html");
-});
+//app.get("/login", function (req, res) {
+//    res.sendFile(__dirname + "/views/login.html");
+//});
 
 //app.post("/login", urlencodedParser, function (req, res) {
     
