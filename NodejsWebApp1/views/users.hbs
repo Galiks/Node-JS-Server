@@ -5,8 +5,18 @@
     </head>
     <body>
         <div>
-            <p>NAME: {{name}}</p>
-            <p>PHONE: {{phone}}</p>
+            <ul>
+                {{#each name}}
+                <li>{{this}}</li>
+                {{/each}}
+                {{#each phone}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <div>
+            {{getTime}}
         </div>
     </body>
 </html>

@@ -40,7 +40,14 @@
     <Content Include="static\css\login.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="static\css\style.css" />
     <Content Include="static\js\createJson.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="static\js\user.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="users.json">
       <SubType>Code</SubType>
     </Content>
     <Content Include="views\index.html" />
@@ -54,7 +61,11 @@
     <Content Include="user.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="views\users.ejs" />
     <Content Include="views\users.hbs" />
+    <Content Include="views\users.html">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="static\" />

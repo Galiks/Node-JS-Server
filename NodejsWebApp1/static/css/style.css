@@ -1,0 +1,33 @@
+img.img-size{
+    width: 350px;
+    height: 253px;
+}
+
+.first-block {
+    display: inline-block;
+    width: 300px;
+    height: 200px;
+    border: 1px red solid;
+    padding: 10px;
+  }
+  
+  .second-block {
+    display: none;
+  }
+  
+  .first-block:hover .second-block {
+    display: block;
+  }
+
+  li{
+      list-style-type: none;
+  }
+
+  p.big-font{
+    font-size: 30px;
+    color: navy;
+  }
+
+  a{
+    color: navy;
+  }

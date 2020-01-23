@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%=title %></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+     
+    <h1><%=title %> в EJS</h1>
+     
+    <% if(namesVisible) {%>
+        <h3>Ёлектронные адреса</h3>
+        <ul>
+            <% for(var i=0; i<name.length;i++) {%>
+                <li><%=name[i] %> - <%=phone[i] %></li>
+            <%} %>
+        </ul>
+    <% }else {%>
+        <h3>»м€ отсутствует</h3>
+    <%} %>
+</body>
+<html>

@@ -1,5 +1,6 @@
 function User(idUser, firstName, lastName, email, password, phone) {
 
+    this.idUser = idUser;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;

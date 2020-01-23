@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Пользователи</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/js/user.js"></script>
+</head>
+<body>
+    <h2>Пользователи</h2>
+    <form name="userForm">
+
+        <input type="hidden" name="id" value="0" />
+
+        <div class="form-group">
+            <label for="firstName">First name: </label>
+            <input class="form-control" name="firstName" />
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Last name: </label>
+            <input class="form-control" name="lastName" />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email: </label>
+            <input class="form-control" name="email" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password: </label>
+            <input class="form-control" name="password" />
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone: </label>
+            <input class="form-control" name="phone" />
+        </div>
+
+        <div class="panel-body">
+            <button type="submit" class="btn btn-sm btn-primary">Save</button>
+            <a id="reset" class="btn btn-sm btn-primary">Reset</a>
+        </div>
+    </form>
+
+    <table class="table table-condensed table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Phone</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+
+        function resetForm() {
+            var form = document.forms["userForm"];
+            form.reset();
+            form.elements["id"].value = 0;
+        }
+
+        var row = function (user) {
+            return "<tr data-rowid='" + user.id + "'><td>" + user.id + "</td>" +
+                "<td>" + user.firstName + "</td> " +
+                "<td>" + user.lastName + "</td> " +
+                "<td>" + user.email + "</td> " +
+                "<td>" + user.password + "</td> " +
+                "<td>" + user.phone + "</td> " +
+
+            "<td><button type='button' id='edit' class='editLink' data-id='" + user.id + "'>Изменить</button> | " +
+            "<button type='button' class='removeLink' data-id='" + user.id + "'>Удалить</button></td></tr>"
+        }
+
+        function getUsers() {
+            $.ajax({
+                url: "/api/users",
+                type: "GET",
+                contentType: "appliction/json",
+                success: function (users) {
+                    var rows = "";
+                    $.each(users, function (index, user) {
+                        rows += row(user);
+                    })
+                    $("table tbody").append(rows);
+                }
+            })
+        }
+
+        function getUserById(id) {
+            $.ajax({
+                url: "/api/users/" + id,
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    var form = document.forms["userForm"];
+                    form.elements["id"].value = user.id;
+                    form.elements["firstName"].value = user.firstName;
+                    form.elements["lastName"].value = user.lastName;
+                    form.elements["email"].value = user.email;
+                    form.elements["password"].value = user.password;
+                    form.elements["phone"].value = user.phone;
+                }
+            })
+        }
+
+        function creteUser(firstName, lastName, email, password, phone) {
+            $.ajax({
+                url: "api/users",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    password: password,
+                    phone: phone
+                }),
+                success: function (user) {
+                    resetForm();
+                    $("table tbody").append(row(user))
+                }
+            })
+        }
+
+        function editUser(id, firstName, lastName, email, password, phone) {
+            $.ajax({
+                url: "api/users/" + id,
+                contentType: "application/json",
+                method: "PUT",
+                data: JSON.stringify({
+                    id: id,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    password: password,
+                    phone: phone
+                }),
+                success: function (user) {
+                    resetForm();
+                    $("tr[data-rowid='" + user.id + "'").replaceWith(row(user));
+                }
+            })
+        }
+
+        function deleteUser(id) {
+            $.ajax({
+                url: "api/users/" + id,
+                contentType: "application/json",
+                method: "DELETE",
+                success: function (user) {
+                    console.log("remove user: " + user);
+                    $("tr[data-rowid='" + user.id + "']").remove();
+                }
+            })
+        }
+
+        getUsers();
+
+        $('#reset').click(function (e) {
+            e.preventDefault();
+            resetForm();
+        })
+
+        $("form").submit(function (e) {
+            e.preventDefault();
+            var id = this.elements["id"].value;
+            var firstName = this.elements["firstName"].value;
+            var lastName = this.elements["lastName"].value;
+            var email = this.elements["email"].value;
+            var password = this.elements["password"].value;
+            var phone = this.elements["phone"].value;
+            if (id == 0) {
+                creteUser(firstName, lastName, email, password, phone);
+            }
+        })
+
+        $("body").on("click", "#edit", function () {
+            console.log("edit");
+            var id = $(this).data("id");
+            var firstName = document.forms['userForm'].elements["firstName"].value;
+            var lastName = document.forms['userForm'].elements["lastName"].value;
+            var email = document.forms['userForm'].elements["email"].value;
+            var password = document.forms['userForm'].elements["password"].value;
+            var phone = document.forms['userForm'].elements["phone"].value;
+            console.log(firstName);
+            editUser(id, firstName, lastName, email, password, phone);
+        })
+
+        $("body").on("click", ".removeLink", function () {
+            var id = $(this).data("id");
+            console.log(id);
+            deleteUser(id);
+        })
+
+
+    </script>
+</body>
+</html>
