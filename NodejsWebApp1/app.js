@@ -1,27 +1,10 @@
 const sqlite = require("sqlite3").verbose();
-let database = new sqlite.Database(':memory:', (err) => {
+let database = new sqlite.Database('./database.db', (err) => {
     if (err) {
         return console.error(err.message);
     }
-    console.log('Connected to the in-memory SQlite database.');
+    console.log('Connected to the SQlite database.');
 })
-
-database.serialize(function () {
-    database.run("CREATE TABLE user (id INT PRIMARY KEY, dt TEXT)");
-
-    var stmt = database.prepare("INSERT into user values(?,?)");
-    for (var i = 0; i < 10; i++) {
-        var d = new Date();
-        var n = d.toLocaleDateString();
-        stmt.run(i, n);
-    }
-
-    stmt.finalize();
-
-    database.each("SELECT id,dt from user", function (err, row) {
-        console.log("User id: " + row.id, row.dt);
-    });
-});
 
 const port = process.env.PORT || 1337;
 
@@ -40,21 +23,55 @@ app.get("/", function (req, res) {
 
 //get users
 app.get("/api/users", function (req, res) {
-    try {
-        var content = fs.readFileSync("users.json", "utf-8").toString();
-        var users = JSON.parse(content);
-        res.send(users);
-    } catch (e) {
-        if (e.code === 'ENOENT') {
-            console.log("File not found");
-        }
-        else {
-            throw e;
-        }
-    }
-    
-});
 
+    var users = {};
+    var key = 'Users';
+    users[key] = []
+
+    var sql = "SELECT u.id, u.First_name, u.Last_name, u.Phone, a.id, a.Email, a.Password, a.idUser " +
+        "FROM user as u " +
+        "JOIN account as a ON a.idUser = u.id";
+
+    database.serialize(function () {
+        database.each(sql, function (err, row) {
+            var user = { id: row.id, firstName: row.First_name, lastName: row.Last_name, email: row.Email, password: row.Password, phone: row.Phone };
+            console.log(user);
+            users[key].push(user);
+        })
+    })
+
+    var data = JSON.stringify(users);
+
+    fs.writeFileSync("users.json", data);
+    res.send(users);
+    //var users = [];
+    //database.serialize(function () {
+    //    database.each("SELECT First_name, Last_name, Phone, Email, Password " +
+    //        "FROM user as u " +
+    //        "JOIN account as a ON a.idUser = u.id", function (err, row) {
+    //            var user = { firstName: First_name, lastName: Last_name, email: Email, password:Password, phone: Phone };
+    //            console.log(user);
+    //            //users.push(user);
+    //        })
+    //})
+
+    //res.send(users);
+
+    //try {
+    //    var content = fs.readFileSync("users.json", "utf-8").toString();
+    //    var users = JSON.parse(content);
+    //    res.send(users);
+    //} catch (e) {
+    //    if (e.code === 'ENOENT') {
+    //        console.log("File not found");
+    //    }
+    //    else {
+    //        throw e;
+    //    }
+    //}
+
+});
+    
 //get user by id
 app.get("/api/users/:id", function (req, res) {
     var id = req.params.id;
@@ -177,12 +194,12 @@ app.put("/api/users/:id", jsonParser, function (req, res) {
 
 app.listen(port);
 
-database.close((err) => {
-    if (err) {
-        return console.error(err.message);
-    }
-    console.log('Close the database connection');
-})
+//database.close((err) => {
+//    if (err) {
+//        return console.error(err.message);
+//    }
+//    console.log('Close the database connection');
+//})
 
 //const express = require("express")
 //const app = express();
